@@ -26,8 +26,12 @@ void AiPlayer::movementPhase() {
             for(int y = currentModel->y - currentModel->movement; y < currentModel->y + currentModel->movement; y++){
                 //if this is a valid move, add it to the list
                 if(this->isValidMove(currentModel->x,currentModel->y,x,y,currentModel->movement)){
+                    GameModel* closestModel = this->closestEnemyModel(currentModel,this->player);
+                    int d_x = abs(closestModel->x - currentModel->x);
+                    int d_y = abs(closestModel->y - currentModel->y);
+                    int distance = sqrt(d_x * d_x + d_y * d_y);
                     if(length == 0){
-                        targets = new Target*[1]{new Target{x,y,this->moveProbability()}};
+                        targets = new Target*[1]{new Target{x,y,this->moveProbability(currentModel->x,currentModel->y,x,y,currentModel->movement,currentModel->bestRange, currentModel->armorSave,distance)}};
                         length++;
                     }else{
                         //valid move, check probability and store move
@@ -35,7 +39,7 @@ void AiPlayer::movementPhase() {
                         for(int n = 0; n < length; n++){
                             newList[n] = targets[n];
                         }
-                        newList[length] = new Target{x,y,this->moveProbability()};
+                        newList[length] = new Target{x,y,this->moveProbability(currentModel->x,currentModel->y,x,y,currentModel->movement,currentModel->bestRange, currentModel->armorSave,distance)};
                         delete[] targets;
                         targets = newList;
                         length++;
@@ -58,6 +62,34 @@ void AiPlayer::movementPhase() {
             }
         }
     }
+}
+
+GameModel* AiPlayer::closestEnemyModel(GameModel* friendly, int player){
+    GameModel** enemyModels = nullptr;
+    int modelLength = -1;
+    if(player == 1){
+        Player* opponent = this->gameManager->getPlayer(2);
+        enemyModels = opponent->gameModels;
+        modelLength = opponent->gameModelLength;
+    }else if(player == 2){
+        Player* opponent = this->gameManager->getPlayer(1);
+        enemyModels = opponent->gameModels;
+        modelLength = opponent->gameModelLength;
+    }
+    int best = 10000000;
+    GameModel* closestModel = nullptr;
+    for(int i = 0; i < modelLength; i++){
+        GameModel* current = enemyModels[i];
+
+        int d_x = abs(friendly->x - current->x);
+        int d_y = abs(friendly->y - current->y);
+        int distance = sqrt(d_x * d_x + d_y * d_y);
+        if(distance < best){
+            best = distance;
+            closestModel = current;
+        };
+    }
+    return closestModel;
 }
 
 void AiPlayer::shootingPhase() {
@@ -125,7 +157,7 @@ void AiPlayer::combatPhase() {
 
 }
 
-float AiPlayer::moveProbability() {
+float AiPlayer::moveProbability(int c_x, int c_y, int t_x, int t_y, int movement, int weaponRange, int save, int closestModel) {
     return (float)rand()/(float)RAND_MAX;//.1f;
 }
 

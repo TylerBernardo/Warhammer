@@ -6,6 +6,7 @@
 #define WARHAMMER_WARHAMMER_GAME_H
 #include "Warhammer_Models.h"
 #include "Warhammer_UiManager.h"
+#include "Ai/newNetwork.h"
 #include <iostream>
 #include <algorithm>
 #include <cstdlib>
@@ -91,6 +92,7 @@ public:
 
 class AiPlayer : public Player{
 public:
+    Network* NeuralNetwork = nullptr;
     AiPlayer(GameModel** models, int length, std::string _name, int _width, int _height, int _player){
         srand(time(nullptr));
         this->name = _name;
@@ -101,7 +103,7 @@ public:
         this->player = _player;
     }
 
-    float moveProbability();
+    float moveProbability(int c_x, int c_y, int t_x, int t_y, int movement, int weaponRange, int save, int closestModel);
 
     float shootProbability();
 
@@ -112,6 +114,8 @@ public:
     void chargePhase() override;
 
     void combatPhase() override;
+
+    GameModel *closestEnemyModel(GameModel *friendly, int player);
 };
 
 //game state represented in grid of 1 inch x 1 inch tiles. Allows for discrete movements instead of continuous movements

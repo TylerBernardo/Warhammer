@@ -16,9 +16,16 @@ inline void sigmoidVector(MatrixXd &input, int height){
     }
 }
 
+inline void sigmoidVector(VectorXd &input, int height){
+    //std::cout << input << std::endl;
+    for(int i = 0; i < height; i++){
+        input(i) = sigmoid(input(i));
+    }
+}
+
 VectorXd arrayToVector(double* input, int length){
     VectorXd output(length);
-    for(int i = 0; i < length - 1; i++){
+    for(int i = 0; i < length; i++){
         output[i] = input[i];
     }
     return output;
@@ -70,6 +77,7 @@ void Network::print(){
 
 void Network::calc(VectorXd &input, MatrixXd &output){
     inputs[0] = input;
+    sigmoidVector(inputs[0],height[0]);
     for(int i = 0; i < length-1; i++){
         MatrixXd result = weights[i] * inputs[i];
         result = result + bias[i];
@@ -122,10 +130,12 @@ inline std::string matrixToString(MatrixXd toConvert){
     return arrayToString(data,size);
 }
 
-
+/*
+ * TODO: Implement with saving
 inline MatrixXd arrayToMatrixXd(double* input, int rows, int cols){
 
 }
+ */
 
 //NOTE: MatrixXd.data() gives a column major order array, not row-major
 //dont bother saving inputs, since those are just rewritten every time
@@ -142,6 +152,7 @@ std::string* Network::networkToString(){
 //constructor for network that loads from a string
 //data should be an array of strings, where each entry is a line from the text file. The length of this array will always be 2l + 2, where l is number of layers. l is present in the text file
 //TODO: Test this code.
+/*
 Network::Network(std::string *data) {
     //load length and heights from the data
     char dummyChar;
@@ -163,4 +174,4 @@ Network::Network(std::string *data) {
         delete bData;
     }
 }
-
+*/

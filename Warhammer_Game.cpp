@@ -11,7 +11,7 @@ struct Target{
 };
 
 bool compareTargets(Target* const& lhs, Target* const& rhs){
-    return lhs->probability < rhs->probability;
+    return lhs->probability > rhs->probability;
 }
 
 void AiPlayer::movementPhase() {
@@ -158,7 +158,11 @@ void AiPlayer::combatPhase() {
 }
 
 float AiPlayer::moveProbability(int c_x, int c_y, int t_x, int t_y, int movement, int weaponRange, int save, int closestModel) {
-    return (float)rand()/(float)RAND_MAX;//.1f;
+    double inputs[8] = {static_cast<double>(c_x),static_cast<double>(c_y),static_cast<double>(t_x),static_cast<double>(t_y),static_cast<double>(movement),static_cast<double>(weaponRange),static_cast<double>(save),static_cast<double>(closestModel)};
+    double output[1] = {0};
+    this->MovementNeuralNetwork->calc(inputs,8,output,1);
+    return output[0];
+    //return (float)rand()/(float)RAND_MAX;//.1f;
 }
 
 float AiPlayer::shootProbability() {

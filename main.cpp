@@ -37,9 +37,13 @@ int main() {
     player1->setGameManager(gameManager);
     player2->setGameManager(gameManager);
 
+
+    gameManager->setModelPosition(&necronModel,2,2,1);
+    gameManager->setModelPosition(&marineModel,5,5,2);
+    /*
     uiManager->setModelPosition(2,2,modelName,1);
     uiManager->setModelPosition(5,5,modelName2,2);
-
+*/
     for(int r = 0; r < 5; r++){
         player1->movementPhase();
         player2->movementPhase();

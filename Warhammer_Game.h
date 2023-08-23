@@ -92,7 +92,7 @@ public:
 
 class AiPlayer : public Player{
 public:
-    Network* NeuralNetwork = nullptr;
+    Network* MovementNeuralNetwork = nullptr;
     AiPlayer(GameModel** models, int length, std::string _name, int _width, int _height, int _player){
         srand(time(nullptr));
         this->name = _name;
@@ -101,6 +101,10 @@ public:
         this->width = _width;
         this->height = _height;
         this->player = _player;
+        int aiLength = 5;
+        //first and last element are input and output layers
+        int *height = new int[length]{8,10,10,10,1};
+        this->MovementNeuralNetwork = new Network(aiLength,height);
     }
 
     float moveProbability(int c_x, int c_y, int t_x, int t_y, int movement, int weaponRange, int save, int closestModel);

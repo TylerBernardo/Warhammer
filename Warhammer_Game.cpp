@@ -136,12 +136,12 @@ void AiPlayer::shootingPhase() {
         for(int k = 0; k < length; k++){
             float randomNumber = (float)rand()/(float)RAND_MAX;
             if(randomNumber < targets[k]->probability){
-                //move model
-                //"T0D0: implement function to handle tile state updating and ui updating" DONE
-                //currentModel->x = targets[k]->target_x;
-                //currentModel->y = targets[k]->target_y;
-                //TODO: Implement shooting
-                //shoot()
+                //Gets target
+                GameModel* target = this->gameManager->getTile(targets[k]->target_x,targets[k]->target_y)->gameModels[0];
+                for(int w = 0; w < currentModel->weaponLength; w++){
+                    int wounds = currentModel->weapons[w].attack(target->toughness,target->armorSave);
+                    target->takeDamage(wounds,currentModel->weapons[w].attacks);
+                }
                 break;
             }
         }

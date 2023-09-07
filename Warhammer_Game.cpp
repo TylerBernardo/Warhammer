@@ -113,6 +113,18 @@ void AiPlayer::shootingPhase() {
         //check all enemy models and see if this unit is in range
         for(int j = 0; j < modelLength; j++){
             if(this->isValidMove(currentModel->x,currentModel->y,enemyModels[j]->x,enemyModels[j]->y,currentModel->bestRange)){
+                int dx = currentModel->x - enemyModels[j]->x;
+                bool lineOfSightTest;
+                if(dx > 0){
+                    //shooter is to the right of target
+                    lineOfSightTest = this->gameManager->lineOfSight(enemyModels[j]->x,enemyModels[j]->y,currentModel->x,currentModel->y);
+                }else{
+                    //target is to the right of shooter
+                    lineOfSightTest = this->gameManager->lineOfSight(currentModel->x,currentModel->y,enemyModels[j]->x,enemyModels[j]->y);
+                }
+                if(!lineOfSightTest){
+                    continue;
+                }
                 if(length == 0){
                     targets = new Target*[1]{new Target{enemyModels[j]->x,enemyModels[j]->y,this->shootProbability()}};
                     length++;
@@ -243,4 +255,32 @@ void WarhammerGameManager::setPlayer(Player *newPlayer, int playerNumber) {
     }else if(playerNumber == 2){
         player2 = newPlayer;
     }
+}
+
+void WarhammerGameManager::takeTurn() const {
+    player1->movementPhase();
+    player1->shootingPhase();
+    player1->chargePhase();
+    player1->combatPhase();
+
+    player2->movementPhase();
+    player2->shootingPhase();
+    player2->chargePhase();
+    player2->combatPhase();
+}
+
+
+// (c_x,c_y) must be to the right of (t_x,t_y)
+bool WarhammerGameManager::lineOfSight(int t_x, int t_y, int c_x, int c_y) const {
+    bool toReturn = true;
+    int dx = c_x - t_x, dy = c_y - t_y;
+    for(int x = t_x; x < c_x; x++){
+        int y = round((float)c_y + ((float)(dx*(x-c_x))/(float)dy));
+        Tile* toCheck = this->getTile(x,y);
+        if(toCheck->terrain->lineOfSightBlocking){
+            toReturn = false;
+            break;
+        }
+    }
+    return toReturn;
 }

@@ -15,6 +15,7 @@ public:
     AiPlayer* player = nullptr;
     AiPlayer* opponent = nullptr;
     WarhammerGameManager* gameManager = nullptr;
+    Network** networks = new Network*[4]{nullptr,nullptr,nullptr,nullptr};
 
     Warhammer_Agent(int _inputSpaceLength,int _outputSpaceLength,int _hiddenLayerCount, Network* _network, AiPlayer* _player, AiPlayer* _opponent){
         this->inputSpaceLength = _inputSpaceLength;
@@ -22,12 +23,16 @@ public:
         this->hiddenLayerCount = _hiddenLayerCount;
         this->player = _player;
         this->opponent = _opponent;
+        networks[0] = player->MovementNeuralNetwork;
     }
 
     bool endState() override;
 };
 
+//TODO:Write constructor and createAgent()
 class Warhammer_Evo : public EvoController {
+    //List of models the AI starts with. Should also preload with positions for models
+    GameModel** startingModels = nullptr;
 
     double* genInputSpace(int agentNumber) override;
 

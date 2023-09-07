@@ -16,6 +16,7 @@
 #include <fstream>
 #include <sstream>
 #include "newNetwork.h"
+#include "../Warhammer_Evo.h"
 using namespace Eigen;
 
 /*

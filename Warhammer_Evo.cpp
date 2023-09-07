@@ -23,16 +23,24 @@ Warhammer_Agent *Warhammer_Evo::createAgent() {
 }
 
 double *Warhammer_Evo::genInputSpace(int agentNumber) {
-    return EvoController::genInputSpace(agentNumber);
+    return nullptr;
 }
 
 int Warhammer_Evo::state(double *output, int agentNumber) {
     int rewardGain = 0;
-    this->
-
+    Warhammer_Agent* current = dynamic_cast<Warhammer_Agent *>((this->agents[agentNumber]));
+    int playerModelCount = current->player->gameModelLength, enemyModelCount = current->opponent->gameModelLength;
+    current->gameManager->takeTurn();
+    int netPlayerCount = current->player->gameModelLength - playerModelCount,netOpponentCount = current->opponent->gameModelLength - enemyModelCount;
+    rewardGain += netOpponentCount * -100;
+    rewardGain -= netPlayerCount * -100;
+    if(current->player->gameModelLength <= 0){}
+    rewardGain -= 10000;
+    //TODO: Determine what should count for score. Models destroyed? Objectives?
     return rewardGain;
 }
 
+//TODO: Set game board to default state. Redo deployment
 void Warhammer_Evo::reset() {
     for(int i = 0; i < this->agentCount; i++){
         Warhammer_Agent* current = dynamic_cast<Warhammer_Agent *>(this->agents[i]);

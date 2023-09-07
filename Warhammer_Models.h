@@ -66,6 +66,8 @@ public:
 };
 
 class GameTerrain : public GameObject{
+public:
+    bool lineOfSightBlocking = true;
     GameTerrain() : GameObject(){
         this->objectType = Terrain;
     }

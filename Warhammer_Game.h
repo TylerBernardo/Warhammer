@@ -152,6 +152,10 @@ public:
     Player* getPlayer(int playerNumber) const;
 
     void setPlayer(Player* newPlayer, int playerNumber);
+
+    void takeTurn() const;
+    //Determines if there is a line of sight between (t_x,t_y) and (c_x, c_y)
+    bool lineOfSight(int t_x, int t_y, int c_x, int c_y) const;
 private:
     Warhammer_UiManager* _uiManager = nullptr;
 };

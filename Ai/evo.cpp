@@ -29,6 +29,26 @@ bool compareFunction(Agent *a1, Agent *a2){
 }
 
 //take the top quarter of agents and repopulate from there
+void warhammerCrossover(Warhammer_Agent** agents,int length){
+    int toKeep = std::round(length/4.0);
+    std::uniform_int_distribution<int> iUnif(1,toKeep-1);
+    for(int a = 0; a < length-toKeep; a++){
+        //determine twoParents TODO: check to make sure parent1 != parent2
+        Warhammer_Agent* parent1 = agents[0], *parent2 = agents[iUnif(re)];
+        for(int k = 0; k < 4; k++){
+            Network* network = (agents[a+toKeep]->networks[k]);
+            for(int i = 0; i < (network->length)-1; i++){
+                //std::cout << network->weights[i] <<std::endl;
+                network->weights[k] = combineMatrixRandom(parent1->networks[k]->weights[i],parent2->networks[k]->weights[i]);
+//std::cout << network->weights[i] << std::endl;
+                network->bias[k] = combineMatrixRandom(parent1->networks[k]->bias[i],parent2->networks[k]->bias[i]);
+            }
+            network->bias[network->length-1] = combineMatrixRandom(parent1->networks[k]->bias[network->length-1],parent2->networks[k]->bias[network->length-1]);
+            agents[a+toKeep]->networks[k] = network;
+        }
+    }
+}
+
 void crossover(Agent** agents,int length){
     int toKeep = std::round(length/4.0);
     std::uniform_int_distribution<int> iUnif(0,toKeep-1);
@@ -73,7 +93,7 @@ void calcGroup(EvoController *controller, int start, int end){
                 controller->agents[i]->network->calc(input,controller->inputSpaceLength, output,controller->outputSpaceLength);
                 int reward = controller->state(output, i);
                 //process reward here
-                controller->agents[i]->reward += reward;
+                controller->agents[i]->reward = reward;
                 delete[] output;
                 delete[] input;
             } while (controller->agents[i]->endState());
@@ -102,7 +122,7 @@ Agent* learn(EvoController *controller, int populationSize, int generations, int
     int threadSize = std::floor(populationSize/(1.0 * threads));
     std::thread **threadList = new std::thread*[threads];
     for(int g = 1; g <= generations; g++){
-        //loop through each agent TODO: Use multithreading to process this faster
+        //loop through each agent
         /*
         for(int i = 0; i < threads ; i++){
             if(i == threads - 1){
@@ -146,7 +166,8 @@ Agent* learn(EvoController *controller, int populationSize, int generations, int
 
         averageScore = averageScore/populationSize;
         std::cout << "The best during generation " << g << " score was " << bestScore << " and the average score was " << averageScore << " in " ;
-        crossover(controller->agents,populationSize);
+        Warhammer_Agent** agentList = reinterpret_cast<Warhammer_Agent **>(controller->agents);
+        warhammerCrossover(agentList,populationSize);
         //possibly multithreading this as well. Maybe rewrite reset to automatically reset all agents, so that multithreading can be implemented on a case to case basis
         /*
         for(int a = 0; a < populationSize; a++){

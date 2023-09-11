@@ -18,6 +18,14 @@ bool Warhammer_Agent::endState() {
 
 Warhammer_Agent *Warhammer_Evo::createAgent() {
     Warhammer_Agent* toReturn = nullptr;
+    //create list of models for player and opponent
+    GameModel* playerList[this->startingModelCount];
+    for(int i = 0; i < this->startingModelCount; i++){
+        playerList[i] = new GameModel(this->startingModels[i]);
+    }
+    //create players for use in simulation
+    AiPlayer* player = new AiPlayer(playerList, this->startingModelCount, "Player1", 44,30,1);
+
 
     return toReturn;
 }

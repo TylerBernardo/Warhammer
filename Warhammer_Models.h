@@ -62,6 +62,23 @@ public:
         this-> name = _name;
     }
 
+    //deep-copy constructor
+    explicit GameModel(GameModel* toCopy){
+        this->objectType = Model;
+        this->modelCount = toCopy->modelCount;
+        this->movement = toCopy->movement;
+        this->toughness = toCopy->toughness;
+        this->armorSave = toCopy->armorSave;
+        this->wounds = toCopy->wounds;
+        this->leadership = toCopy->leadership;
+        this->objectiveControl = toCopy->objectiveControl;
+        this->bestRange = toCopy->bestRange;
+        this->worstRange = toCopy->worstRange;
+        this->bestGunStrength = toCopy->bestGunStrength;
+        this->worstGunStrength = toCopy->worstGunStrength;
+        this-> name = toCopy->name;
+    }
+
     void takeDamage(int hits, int damage);
 };
 

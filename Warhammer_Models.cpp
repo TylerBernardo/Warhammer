@@ -57,7 +57,7 @@ void GameModel::takeDamage(int hits, int damage) {
         if(currentDamage > wounds){
             currentDamage = 0;
             modelCount--;
-            //TODO: think of better way to do this
+            //TODO: think of better way to do this. Should work with reanimation protocols in future. Each weapon tracks its current quantity and max quantity?
             bool done = false;
             do{
                 int choice = weaponChoice(re);
